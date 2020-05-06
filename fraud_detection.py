@@ -1,0 +1,78 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, accuracy_score
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+
+data = pd.read_csv('creditcard.csv')
+
+print(data.columns)
+
+print(data.shape)
+
+data = data.sample(frac = 0.1, random_state= 1)
+
+print(data.shape)
+
+#Determing number of fraud cases in a dataset
+
+Fraud = data[data['Class'] == 1]
+Valid = data[data['Class'] == 0]
+
+outlier_fraction = len(Fraud) / float(len(Valid))
+
+print(outlier_fraction)
+
+print("fraud cases: {}".format(len(Fraud)))
+print("valid cases: {}".format(len(Valid)))
+
+#correlation matrix
+#see if there are any sstrong correlations between variables in dataset
+corrmat = data.corr()
+fig = plt.figure(figsize= (12, 9))
+
+#format dataset
+
+#Get all columns from dataset
+columns = data.columns.tolist()
+
+#remove unnecessary columns (remove 'class' column0
+columns = [c for c in columns if c not in ["Class"]]
+
+#store the variable we'll be predicting on
+target = "Class"
+
+X = data[columns]
+#Target means this is what we are trying to determine
+#Class: 0 = valid, 1 = fraudulent
+y = data[target]
+
+#Print the shapes of X and y
+print(X.shape)
+print(y.shape)
+
+#Start building our networks using isolation forest algorithm and local outlier factor algorithm
+#Try and do anomaly detection on dataset
+
+#49 anomaly cases (frauds)
+
+#define a random state
+state = 1
+
+#define the outlier detection methods
+#dictionary of classifiers:
+classifiers = {
+    "Isolation Forest": IsolationForest(max_samples=len(X),
+                                        contamination=outlier_fraction,
+                                        random_state=state),
+    "Local Outlier Factor": LocalOutlierFactor(
+        n_neighbors= 20,
+        contamination= outlier_fraction
+    )
+}
+
+
+
+
+
+
