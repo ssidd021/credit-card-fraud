@@ -1,5 +1,11 @@
+import sys
+import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy
+import sklearn
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
@@ -70,6 +76,46 @@ classifiers = {
         contamination= outlier_fraction
     )
 }
+
+#fit the model
+
+#number of outliers
+n_outliers = len(Fraud)
+
+#do for loop through 2 different classifiers defined above
+#enumerate list of classifiers so we can cycle through them
+#can index dictionary using .item
+
+for i, (clf_name, clf) in enumerate(classifiers.items()):
+    #fit the data and log outliers
+
+    if clf_name == "Local Outlier Factor":
+        y_pred = clf.fit_predict(X)
+        scored_pred = clf.negative_outlier_factor_
+    else:
+        clf.fit(X)
+        scored_pred = clf.decision_function(X)
+        y_pred = clf.predict(X)
+
+
+# y prediction values: -1 = outlier, 1 = inlier
+# need to process information before comparing to class labels(0 = valid, 1 = fraud)
+# index y prediction:
+    # if = 1 -> 0
+    # if = -1 -> 1
+
+y_pred[y_pred == 1] = 0
+y_pred[y_pred == -1] = 1
+
+# Calculate number of errors -> use comparison to y (target)
+# Total number of errors:
+n_errors = (y_pred != y).sum()
+
+#Run classification metrics to get useful information
+print('{}. {}'.format(clf_name, n_errors))
+print(accuracy_score(y, y_pred))
+print(classification_report(y, y_pred))
+
 
 
 
