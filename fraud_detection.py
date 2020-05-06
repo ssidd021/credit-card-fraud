@@ -1,11 +1,5 @@
-import sys
-import numpy as np
 import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt
-import seaborn as sns
-import scipy
-import sklearn
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
